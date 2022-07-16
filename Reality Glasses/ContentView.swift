@@ -27,12 +27,34 @@ struct ARViewContainer: UIViewRepresentable {
         return entity
     }
     
-    func createSphere(x: Float = 0, y: Float = 0, z: Float = 0) -> Entity {
+    func createCircle(x: Float = 0, y: Float = 0, z: Float = 0) -> Entity {
+        // Create circle mesh
+        let circle = MeshResource.generateBox(size: 0.05, cornerRadius: 0.025)
+        
+        // Create material
+        let material = SimpleMaterial(color: .blue, isMetallic: true)
+        
+        // Create entity
+        let circleEntity = ModelEntity(mesh: circle, materials: [material])
+        circleEntity.position = SIMD3(x, y, z)
+        circleEntity.scale.x = 1.1
+        circleEntity.scale.z = 0.01
+        
+        return circleEntity
+    }
+    
+    func createSphere(x: Float = 0,
+                      y: Float = 0,
+                      z: Float = 0,
+                      color: UIColor = .red,
+                      radius: Float = 1) -> Entity {
         // Craate sphere mesh
-        let sphere = MeshResource.generateSphere(radius: 0.075)
+        let sphere = MeshResource.generateSphere(radius: radius)
+        let material = SimpleMaterial(color: color, isMetallic: true)
+        
         
         // Create sphere entity
-        let sphereEntity = ModelEntity(mesh: sphere)
+        let sphereEntity = ModelEntity(mesh: sphere, materials: [material])
         sphereEntity.position = SIMD3(x, y, z)
         
         return sphereEntity
@@ -59,7 +81,9 @@ struct ARViewContainer: UIViewRepresentable {
         let faceAnchor = AnchorEntity(.face)
         
         // Add box to the face anchor
-        faceAnchor.addChild(createSphere(y: 0.25))
+        faceAnchor.addChild(createCircle(x: 0.035, y: 0.025, z: 0.06))
+        faceAnchor.addChild(createCircle(x: -0.035, y: 0.025, z: 0.06))
+        faceAnchor.addChild(createSphere(z: 0.06, radius: 0.025))
         
         // Face anchor to the scene
         arView.scene.anchors.append(faceAnchor)
